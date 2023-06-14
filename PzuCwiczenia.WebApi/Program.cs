@@ -21,37 +21,7 @@ namespace PzuCwiczenia.WebApi
             app.UseAuthorization();
 
 
-            //app.MapControllers();
-
-            app.Use(async (context, next) =>
-            {
-                Debug.WriteLine($"1. Enpoint: {context.GetEndpoint()?.DisplayName ?? (null)}");
-                await next();
-            });
-
-            app.UseRouting();
-
-            app.Use(async (context, next) =>
-            {
-                Debug.WriteLine($"2. Enpoint: {context.GetEndpoint()?.DisplayName ?? (null)}");
-                await next();
-            });
-
-            app.MapGet("/", (HttpContext context) =>
-            {
-                Debug.WriteLine($"3. Enpoint: {context.GetEndpoint()?.DisplayName ?? (null)}");
-                return "Hello world";
-            }).WithDisplayName("Hello");
-
-            app.UseEndpoints(route =>
-                route.MapControllerRoute("Default", "{controller=Home}/{action=Get}/{id:int?}")
-            );
-
-            app.Use(async (context, next) =>
-            {
-                Debug.WriteLine($"4. Enpoint: {context.GetEndpoint()?.DisplayName ?? (null)}");
-                await next();
-            });
+            app.MapControllers();
 
             app.Run();
         }
