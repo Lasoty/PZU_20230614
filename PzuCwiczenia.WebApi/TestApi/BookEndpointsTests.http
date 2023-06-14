@@ -7,3 +7,10 @@ GET https://{{hostname}}:{{port}}/Books/1
 ###
 
 GET https://{{hostname}}:{{port}}/Books
+
+###
+
+POST https://{{hostname}}:{{port}}/Books
+Content-Type: application/json
+
+{"id":0,"title":"Test from api","author":"Leszek Lewandowski","pageCount":1111,"isBorrowed":false,"borrower":null}
