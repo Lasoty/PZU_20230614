@@ -1,4 +1,8 @@
+using PzuCwiczenia.Infrastructure.ServiceInterfaces;
+using PzuCwiczenia.Services.Books;
 using System.Diagnostics;
+using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PzuCwiczenia.WebApi
 {
@@ -11,6 +15,8 @@ namespace PzuCwiczenia.WebApi
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 

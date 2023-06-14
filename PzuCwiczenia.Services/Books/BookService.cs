@@ -29,6 +29,11 @@ public class BookService : IBookService
         return true;
     }
 
+    public bool Exists(int id)
+    {
+        return Books.Any(x => x.Id == id);
+    }
+
     public BookDto GetBook(int id)
     {
         return Books.FirstOrDefault(x => x.Id == id);

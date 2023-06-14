@@ -1,11 +1,10 @@
-﻿namespace PzuCwiczenia.Infrastructure.ModelDto
+﻿namespace PzuCwiczenia.Infrastructure.ModelDto;
+
+public class CustomerDto
 {
-    public class CustomerDto
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string FirstName { get; set; }
+    public string FirstName { get; set; }
 
-        public string LastName { get; set; }
-    }
+    public string LastName { get; set; }
 }
