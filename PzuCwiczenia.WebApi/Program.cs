@@ -5,6 +5,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication;
+using PzuCwiczenia.WebApi.Authentication;
+using PzuCwiczenia.Services.Authentication;
 
 namespace PzuCwiczenia.WebApi
 {
@@ -16,8 +19,12 @@ namespace PzuCwiczenia.WebApi
 
             // Add services to the container.
 
+            builder.Services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
             builder.Services.AddControllers();
             builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
             builder.Services.AddEndpointsApiExplorer();
@@ -42,6 +49,30 @@ namespace PzuCwiczenia.WebApi
                     }
                 });
 
+                option.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+                {
+                    Name = "Authentication",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    In = ParameterLocation.Header,
+                    Description = "Uwierzytelnianie metod¹ Basic Authentication"
+                });
+
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "basic"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
                 var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
             });
@@ -61,6 +92,7 @@ namespace PzuCwiczenia.WebApi
                 });
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PzuCwiczenia.Infrastructure.ModelDto;
 using PzuCwiczenia.Infrastructure.ServiceInterfaces;
@@ -30,6 +31,7 @@ public class BooksController : Controller
     /// <returns>Kolekcja obiektów <see cref="BookViewModel"/>.</returns>
     /// <response code="200">Lista książek dostępnych w bibliotece</response>
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BookViewModel>))]
     public async Task<IActionResult> Get()
     {
@@ -46,7 +48,8 @@ public class BooksController : Controller
     /// <returns>Obiekt typu <see cref="BookViewModel"/>.</returns>
     /// <response code="200">Książka o wskazanym ID</response>
     /// <response code="404">Jeśli książka nie istnieje.</response>
-    [HttpGet("{id}")]    
+    [Authorize(Roles = "Admin,User")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookViewModel))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = null)]
     public async Task<IActionResult> Get(int id)

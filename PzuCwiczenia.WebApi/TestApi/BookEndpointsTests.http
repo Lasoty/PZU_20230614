@@ -3,10 +3,12 @@
 @port=7111
 
 GET https://{{hostname}}:{{port}}/Books/1
+Authorization: Basic YWRtaW46UGEkJHcwcmQ=
 
 ###
 
-GET https://{{hostname}}:{{port}}/Books
+GET https://{{hostname}}:{{port}}/Books HTTP/1.1
+Authorization: Basic YWRtaW46UGEkJHcwcmQ=
 
 ###
 
