@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PzuCwiczenia.Infrastructure.ModelDto;
 using PzuCwiczenia.Infrastructure.ServiceInterfaces;
 using PzuCwiczenia.WebApi.ViewModel;
+using PzuCwiczenia.WebApi.ViewModel.Requests;
 using System.Collections;
 
 namespace PzuCwiczenia.WebApi.Controllers;
@@ -56,6 +57,21 @@ public class BooksController : Controller
         }
 
         return Ok(mapper.Map<BookViewModel>(bookService.GetBook(id)));
+    }
+
+    [HttpPost("find")]
+    public async Task<IActionResult> Get([FromBody] GetBookRequest request)
+    {
+        IEnumerable<BookDto> books = bookService.GetBook(request.Title, request.MinimumPages, request.PageCount, request.PageNumber);
+
+        return Ok(mapper.Map<BookViewModel>(books));
+    }
+
+    [HttpGet("findQuery")]
+    public async Task<IActionResult> Find([FromQuery] string title, [FromQuery] int minPage)
+    {
+        IEnumerable<BookDto> books = bookService.GetBook(title, minPage, 0, 0);
+        return Ok(mapper.Map<BookViewModel>(books));
     }
 
     /// <summary>

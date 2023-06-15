@@ -39,6 +39,11 @@ public class BookService : IBookService
         return Books.FirstOrDefault(x => x.Id == id);
     }
 
+    public IEnumerable<BookDto> GetBook(string title, int minimumPages, int pageCount, int pageNumber)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<BookDto> GetBooks()
     {
         return Books;

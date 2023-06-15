@@ -14,4 +14,5 @@ public interface IBookService
 
     bool DeleteBook(int id);
     bool Exists(int id);
+    IEnumerable<BookDto> GetBook(string title, int minimumPages, int pageCount, int pageNumber);
 }
