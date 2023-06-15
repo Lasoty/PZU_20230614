@@ -8,6 +8,9 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
 using PzuCwiczenia.WebApi.Authentication;
 using PzuCwiczenia.Services.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace PzuCwiczenia.WebApi
 {
@@ -19,12 +22,35 @@ namespace PzuCwiczenia.WebApi
 
             // Add services to the container.
 
-            builder.Services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            //Basic Authentication
+            //builder.Services.AddAuthentication("BasicAuthentication")
+            //    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            // JwtBearer Authentication
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            var secretKey = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+
+            builder.Services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt =>
+            {
+                opt.RequireHttpsMetadata = false;
+                opt.SaveToken = true;
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<Infrastructure.ServiceInterfaces.IAuthenticationService, AuhtenticationService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
             builder.Services.AddEndpointsApiExplorer();
@@ -49,13 +75,38 @@ namespace PzuCwiczenia.WebApi
                     }
                 });
 
-                option.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+                //option.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+                //{
+                //    Name = "Authentication",
+                //    Type = SecuritySchemeType.Http,
+                //    Scheme = "basic",
+                //    In = ParameterLocation.Header,
+                //    Description = "Uwierzytelnianie metod¹ Basic Authentication"
+                //});
+
+                //option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme
+                //        {
+                //            Reference = new OpenApiReference
+                //            {
+                //                Type = ReferenceType.SecurityScheme,
+                //                Id = "basic"
+                //            }
+                //        },
+                //        Array.Empty<string>()
+                //    }
+                //});
+
+                option.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
                 {
-                    Name = "Authentication",
+                    BearerFormat = "JWT",
+                    Name = "Authorization",
                     Type = SecuritySchemeType.Http,
-                    Scheme = "basic",
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
                     In = ParameterLocation.Header,
-                    Description = "Uwierzytelnianie metod¹ Basic Authentication"
+                    Description = "Uwierzytelnianie metod¹ JWT Token"
                 });
 
                 option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -66,7 +117,7 @@ namespace PzuCwiczenia.WebApi
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "basic"
+                                Id = JwtBearerDefaults.AuthenticationScheme
                             }
                         },
                         Array.Empty<string>()
